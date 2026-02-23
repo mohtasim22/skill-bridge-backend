@@ -1,5 +1,3 @@
-
-
 import { NextFunction, Request, Response } from "express";
 import { slotService } from "./slot.service";
 
@@ -26,7 +24,6 @@ const getAllSlots = async( req: Request, res: Response, next: NextFunction)=>{
         })
     } catch (e){
         next(e);
-        // console.error("Full error:", error);
     }
 } 
 
@@ -41,7 +38,6 @@ const updateSlot = async( req: Request, res: Response, next: NextFunction)=>{
         })
     } catch (e){
         next(e);
-        // console.error("Full error:", e);
     }
 }
 
@@ -55,7 +51,6 @@ const deleteSlot = async( req: Request, res: Response, next: NextFunction)=>{
         })
     } catch (e){
         next(e);
-        // console.error("Full error:", e);
     }
 }
 
