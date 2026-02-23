@@ -15,7 +15,8 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         next(e);
     }
 }
-const loginUser = async (req: Request, res: Response) => {
+
+const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
         const result = await AuthService.loginUserIntoDB(req.body);
@@ -31,13 +32,9 @@ const loginUser = async (req: Request, res: Response) => {
             user: result
         })
     } catch (e) {
-        res.status(400).json({
-            error: "User login failed",
-            details: e
-        })
+        next(e);
     }
 }
-
 
 export const AuthController = {
     createUser,
