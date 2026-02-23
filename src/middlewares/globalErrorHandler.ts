@@ -7,6 +7,7 @@ export function errorHandler(
   res: Response,
   next: NextFunction,
 ) {
+    
   let statusCode = 500;
   let errMessage = "Internal server Error!";
   let errorDetails = err;
