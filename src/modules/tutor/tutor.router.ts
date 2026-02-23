@@ -9,6 +9,4 @@ router.get("/:id", tutorController.getTutor);
 router.patch("/", auth(UserRole.tutor), tutorController.updateTutor)
 router.delete("/:id", auth(UserRole.tutor), tutorController.deleteTutor)
 
-
-
 export const tutorRouter = router;
