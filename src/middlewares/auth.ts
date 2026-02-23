@@ -26,6 +26,7 @@ const auth = (...roles: UserRole[]) => {
           email: decoded.email,
         },
       });
+      
       if (!userData) {
         throw new Error("Unauthorized!");
       }
