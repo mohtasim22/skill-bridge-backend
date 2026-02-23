@@ -35,7 +35,6 @@ const updateCourse = async( req: Request, res: Response, next: NextFunction)=>{
     }
 } 
 
-
 export const CourseController ={
     createCourse,
     getAllCourses,

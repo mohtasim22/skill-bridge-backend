@@ -31,7 +31,6 @@ const createCourse = async (payload: any, userID: string) => {
     return result;
 }
 
-
 const getAllCourses = async (userID: string) => {
 
     const userData = await prisma.user.findUnique({
