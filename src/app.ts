@@ -11,8 +11,6 @@ const app: Application = express();
 
 app.use(express.json());
 
-
-
 app.use('/api/v1/auth', AuthRoutes);
 app.use('/api/v1/tutor', tutorRouter);
 app.use('/api/v1/courses', courseRouter);
@@ -20,9 +18,8 @@ app.use('/api/v1/slots', courseSlotRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/bookings', bookingRouter);
     
-
 app.get("/", (req, res) =>{
-    res.send("Hello, World!")
+    res.send("Server is running successfully");
 })
 
 app.use(notFound);
