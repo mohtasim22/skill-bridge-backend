@@ -13,14 +13,10 @@ const seedAdmin = async () => {
         role: UserRole.admin,
         password: hashedPassword,
     };
-
-    // 1. is Admin already exists!
-    // 2. if Exists then return
-    // 3. If not then create
-
+    
     try {
+        console.log("Checking if admin already exists...");
 
-        console
         const isExists = await prisma.user.findUnique({
             where: {
                 email: adminData.email,
@@ -32,7 +28,7 @@ const seedAdmin = async () => {
             return;
         }
         console.log("Admin does not exist. Creating admin...");
-        
+
         const admin = await prisma.user.create({
             data: adminData,
         });
