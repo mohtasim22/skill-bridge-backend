@@ -1,5 +1,3 @@
-
-
 import { NextFunction, Request, Response } from "express";
 import { reviewService } from "./review.service";
 
@@ -15,6 +13,7 @@ const createReview = async( req: Request, res: Response, next: NextFunction)=>{
         next(e);
     }
 } 
+
 const getAllReviews = async( req: Request, res: Response, next: NextFunction)=>{
     try{
         const result = await reviewService.getAllReviews(req.user?.id);
