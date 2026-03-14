@@ -1,51 +1,95 @@
 import { prisma } from "../../lib/prisma";
 
 
-const createTutorIntoDB = async (payload: any, userId: string) => {
-    const user = await prisma.user.findUnique({
-        where: {
-            id: userId,
-        },
-    });
-    if (!user) {
-        throw new Error("User not found");
-    }
-    const result = await prisma.tutorProfile.create({
-        data: { ...payload, user_id: user.id },
+const createTutorIntoDB = async (payload: {
+  display_name: string
+  bio: string
+  qualification: string
+  email: string
+}) => {
+  const user = await prisma.user.findUnique({
+    where: { email: payload.email },
+  })
+
+  if (!user) throw new Error("User not found")
+  if (user.role !== "TUTOR") throw new Error("Only tutors can create a tutor profile")
+
+  const existing = await prisma.tutorProfile.findUnique({
+    where: { user_id: user.id },
+  })
+  if (existing) throw new Error("Tutor profile already exists")
+
+  return prisma.tutorProfile.create({
+    data: {
+      display_name: payload.display_name,
+      bio: payload.bio,
+      qualification: payload.qualification,
+      user_id: user.id,
+    },
+  })
+}
+
+const getAllTutor = async () => {
+    const result = await prisma.tutorProfile.findMany({
+        include: {
+    courses: true, 
+    courseSlots: true,
+    user: true
+  }
     });
     return result;
 };
 
-const getTutorByUserId = async (tutorId: string) => {
-    
-    const result = await prisma.tutorProfile.findUnique({
-        where: {
-            id: tutorId,
-        },
-    });
-    return result;
+const getTutorService = async ({ userId, tutorId }: { userId?: string; tutorId?: string }) => {
+  if (!userId && !tutorId) {
+    throw new Error("Provide either userId or tutorId");
+  }
+
+  const result = await prisma.tutorProfile.findUnique({
+    where: userId 
+      ? { user_id: userId } 
+      : { id: tutorId! },
+  });
+
+  return result;
 };
 
-const updateTutor = async (payload: Partial<{
+const updateTutor = async (
+  payload: Partial<{
     display_name: string;
     bio: string;
     qualification: string;
-  }>, userId: string) => {
-    const user = await prisma.user.findUnique({
-        where: {
-            id: userId,
-        },
+    is_verified: boolean;
+  }>,
+  userId: string,
+  tutorProfileId?: string
+) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  // admin — uses tutorProfileId directly
+  if (user.role === "ADMIN") {
+    if (!tutorProfileId) throw new Error("Tutor profile ID is required");
+
+    const tutor = await prisma.tutorProfile.findUnique({
+      where: { id: tutorProfileId },
     });
-    if (!user) {
-        throw new Error("User not found");
-    }
-    const result = await prisma.tutorProfile.update({
-        where: {
-            user_id: user.id,
-        },
-        data: { ...payload},
+    if (!tutor) throw new Error("Tutor profile not found");
+
+    return prisma.tutorProfile.update({
+      where: { id: tutorProfileId },
+      data: payload,
     });
-    return result;
+  }
+
+  // tutor updates own profile
+  return prisma.tutorProfile.update({
+    where: { user_id: userId },
+    data: payload,
+  });
 };
 
 const deleteTutor = async (tutorId: string, userId: string) => {
@@ -75,7 +119,8 @@ const deleteTutor = async (tutorId: string, userId: string) => {
 
 export const tutorService = {
     createTutorIntoDB,
+    getAllTutor,
     updateTutor,
-    getTutorByUserId,
+    getTutorService,
     deleteTutor
 }

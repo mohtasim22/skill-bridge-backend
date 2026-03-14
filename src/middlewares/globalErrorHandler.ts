@@ -15,7 +15,7 @@ export function errorHandler(
   if (err instanceof Prisma.PrismaClientValidationError) {
     ((statusCode = 400), (errMessage = "Incorrect body or missing a fields"));
   }
-
+  console.log("Error details:", err);
   res.status(statusCode);
   res.json({ success: false, message: errMessage, error: errorDetails });
 }

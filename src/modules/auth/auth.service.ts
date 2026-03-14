@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma";
 import jwt from "jsonwebtoken";
-export const secret = "lsdngkdsbfgbkdf";
 
 const createUserIntoDB = async (payload: any) => {
     const hashPassword = await bcrypt.hash(payload.password, 8);
@@ -35,12 +34,30 @@ const loginUserIntoDB = async (payload: any) => {
         email: user.email,
     };
 
-    const token = jwt.sign(userData, secret, { expiresIn: "7d" });
+    const token = jwt.sign(userData, process.env.JWT_SECRET as string, { expiresIn: "7d" });
 
     return { token, user: userData };
 }
 
+const updateUserIntoDB = async (payload: {name?: string}, userId: string) => {
+    const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+    const result = await prisma.user.update({
+        where: {
+            id: userId
+        },
+        data: payload,
+    });
+    const { password, ...newResult } = result;
+    return newResult;
+}
 export const AuthService = {
     createUserIntoDB,
-    loginUserIntoDB
+    loginUserIntoDB,
+    updateUserIntoDB
 }

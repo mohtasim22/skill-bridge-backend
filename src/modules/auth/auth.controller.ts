@@ -12,6 +12,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
             user: result
         })
     } catch (e) {
+        console.log(e);
         next(e);
     }
 }
@@ -32,11 +33,26 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
             user: result
         })
     } catch (e) {
+        console.log(e);
         next(e);
     }
 }
+const updateUser = async (req: Request, res: Response, next: NextFunction) => {
 
+    try {
+        const result = await AuthService.updateUserIntoDB(req.body, req.user?.id as string);
+        res.status(201).json({
+            status: "success",
+            message: "User updated successfully",
+            user: result
+        })
+    } catch (e) {
+        console.log(e);
+        next(e);
+    }
+}
 export const AuthController = {
     createUser,
-    loginUser
+    loginUser,
+    updateUser
 }

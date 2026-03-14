@@ -4,50 +4,85 @@ import { tutorService } from "./tutor.service";
 const createTutor = async (req: Request, res: Response, next: NextFunction) => {
     try {
         console.log(req.user?.id)
-        const result = await tutorService.createTutorIntoDB(req.body,req.user?.id);
+        const result = await tutorService.createTutorIntoDB(req.body);
 
         res.status(201).json({
             status: "success",
-            message: "Tutor registered successfully",
-            user: result
+            message: "Tutor profile created successfully",
+            tutor: result
         })
     } catch (e) {
-        
+
+        next(e);
+    }
+}
+const getAllTutor = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await tutorService.getAllTutor();
+        res.status(201).json({
+            status: "success",
+            message: "Tutor retrieved successfully",
+            tutor: result
+        })
+    } catch (e) {
         next(e);
     }
 }
 const getTutor = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.user?.id)
-        const result = await tutorService.getTutorByUserId(req.params?.id as string);
+        const { userId, tutorId } = req.query;
+
+        if (!userId && !tutorId) {
+            res.status(400).json({
+                status: "error",
+                message: "Provide either userId or tutorId",
+            });
+            return;
+        }
+
+        const result = await tutorService.getTutorService({
+            userId: userId as string,
+            tutorId: tutorId as string,
+        });
+
+        if (!result) {
+            res.status(404).json({
+                status: "error",
+                message: "Tutor not found",
+            });
+            return;
+        }
 
         res.status(201).json({
             status: "success",
             message: "Tutor retrieved successfully",
-            user: result
+            tutor: result
         })
     } catch (e) {
         next(e);
     }
 }
-const updateTutor = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        console.log(req.user?.id)
-        const result = await tutorService.updateTutor(req.body,req.user?.id);
 
-        res.status(201).json({
+const updateTutor = async (req: Request, res: Response, next: NextFunction) => {
+    try {    
+
+        const result = await tutorService.updateTutor(req.body,
+      req.user?.id as string,   
+      req.params?.id as string)
+
+        res.status(200).json({
             status: "success",
-            message: "Tutor updated successfully",
-            user: result
+            message: "Tutor profile updated successfully",
+            tutor: result,
         })
     } catch (e) {
-        next(e);
+        next(e)
     }
 }
 
 const deleteTutor = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const result = await tutorService.deleteTutor(req.params?.id as string, req.user?.id as string);        
+        const result = await tutorService.deleteTutor(req.params?.id as string, req.user?.id as string);
         res.status(201).json({
             status: "success",
             message: "Tutor deleted successfully",
@@ -60,6 +95,7 @@ const deleteTutor = async (req: Request, res: Response, next: NextFunction) => {
 
 export const tutorController = {
     createTutor,
+    getAllTutor,
     updateTutor,
     getTutor,
     deleteTutor

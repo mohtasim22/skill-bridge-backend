@@ -26,6 +26,18 @@ const getAllReviews = async( req: Request, res: Response, next: NextFunction)=>{
         next(e);
     }
 } 
+const getTutorReviewsById = async( req: Request, res: Response, next: NextFunction)=>{
+    try{
+        const result = await reviewService.getTutorReviewsById(req.params?.id as string ,req.user?.id);
+        res.status(201).json({
+            status: "success",
+            message: "Reviews retrieved successfully",
+            reviews: result
+        })
+    } catch (e){
+        next(e);
+    }
+} 
 
 const updateReview = async( req: Request, res: Response, next: NextFunction)=>{
     try{
@@ -53,10 +65,26 @@ const deleteReview = async( req: Request, res: Response, next: NextFunction)=>{
         next(e);
     }
 }
+const getPublicTutorReviews = async( req: Request, res: Response, next: NextFunction)=>{
+    try{
+        const result = await reviewService.getPublicTutorReviews(req.params?.id as string);
+        res.status(201).json({
+            status: "success",
+            message: "Reviews retrieved successfully",
+            reviews: result
+        })
+    } catch (e){
+        next(e);
+    }
+}
+
+
 
 export const reviewController = {
     createReview,
     getAllReviews,
+    getTutorReviewsById,
+    getPublicTutorReviews,
     updateReview,
     deleteReview    
 }

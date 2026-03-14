@@ -10,13 +10,14 @@ const createSlot = async( req: Request, res: Response, next: NextFunction)=>{
             slot: result
         })
     } catch (e){
+        console.error("Full error:", e)
         next(e);
         // console.error("Full error:", error);
     }
 } 
-const getAllSlots = async( req: Request, res: Response, next: NextFunction)=>{
+const getAllSlotsByTutor = async( req: Request, res: Response, next: NextFunction)=>{
     try{
-        const result = await slotService.getAllSlots(req.user?.id);
+        const result = await slotService.getAllSlotsByTutor(req.params?.id as string);
         res.status(201).json({
             status: "success",
             message: "Slots retrieved successfully",
@@ -26,6 +27,31 @@ const getAllSlots = async( req: Request, res: Response, next: NextFunction)=>{
         next(e);
     }
 } 
+const getAllSlots = async( req: Request, res: Response, next: NextFunction)=>{
+    try{
+        const result = await slotService.getAllSlots();
+        res.status(201).json({
+            status: "success",
+            message: "Slots retrieved successfully",
+            slots: result
+        })
+    } catch (e){
+        next(e);
+    }
+} 
+
+const getSlotById = async( req: Request, res: Response, next: NextFunction)=>{
+    try{
+        const result = await slotService.getSlotById(req.params?.id as string, req.user?.id as string);
+        res.status(201).json({
+            status: "success",
+            message: "Slot retrieved successfully",
+            slot: result
+        })
+    } catch (e){
+        next(e);
+    }
+}
 
 const updateSlot = async( req: Request, res: Response, next: NextFunction)=>{
     try{
@@ -56,7 +82,9 @@ const deleteSlot = async( req: Request, res: Response, next: NextFunction)=>{
 
 export const slotController = {
     createSlot,
+    getAllSlotsByTutor,
     getAllSlots,
     updateSlot,
-    deleteSlot    
+    deleteSlot,
+    getSlotById    
 }

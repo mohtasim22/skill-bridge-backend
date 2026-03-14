@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { secret } from "../modules/auth/auth.service";
 import { prisma } from "../lib/prisma";
 
 export enum UserRole {
@@ -19,14 +18,14 @@ const auth = (...roles: UserRole[]) => {
         throw new Error("Token not found!!");
       }
 
-      const decoded = jwt.verify(token, secret) as JwtPayload;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
 
       const userData = await prisma.user.findUnique({
         where: {
           email: decoded.email,
         },
       });
-      
+
       if (!userData) {
         throw new Error("Unauthorized!");
       }
