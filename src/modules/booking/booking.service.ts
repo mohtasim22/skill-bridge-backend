@@ -1,4 +1,4 @@
-import { Booking } from "../../../generated/prisma/client";
+import { Booking } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 const createBookingIntoDB = async (

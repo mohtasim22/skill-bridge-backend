@@ -1,4 +1,4 @@
-import { Review } from "../../../generated/prisma/client";
+import { Review } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 const recalculateTutorRating = async (tutorId: string) => {
